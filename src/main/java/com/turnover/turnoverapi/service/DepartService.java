@@ -7,6 +7,9 @@ import com.turnover.turnoverapi.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +44,9 @@ public class DepartService {
 
     public List<Depart> getDepartByType(String type) {
         return departRepository.findAllByType(type);
+    }
+
+    public List<Depart> getDepartBetween(Timestamp from, Timestamp to) {
+        return departRepository.findAllByDateBetween(from, to);
     }
 }
