@@ -29,7 +29,7 @@ public class DepartService {
      * @return the list of entities
      */
     public List<Depart> getAllDepart() {
-        return departRepository.findAll();
+            return departRepository.findAll();
     }
 
     /**
@@ -42,11 +42,12 @@ public class DepartService {
         return departRepository.findById(id);
     }
 
-    public List<Depart> getDepartByType(String type) {
-        return departRepository.findAllByType(type);
-    }
-
     public List<Depart> getDepartBetween(Timestamp from, Timestamp to) {
         return departRepository.findAllByDateBetween(from, to);
     }
+
+    public List<Depart> getDepartByCentreCode(String code) {
+        return departRepository.findAllByCentrecoutCode(code);
+    }
+
 }
