@@ -2,6 +2,7 @@ package com.turnover.turnoverapi.service;
 
 import com.turnover.turnoverapi.entity.*;
 import com.turnover.turnoverapi.entity.dao.Graphe;
+import com.turnover.turnoverapi.repository.CentrecoutRepository;
 import com.turnover.turnoverapi.repository.DepartRepository;
 import com.turnover.turnoverapi.repository.OFSTurnoverRepository;
 import com.turnover.turnoverapi.utils.CalculateTurnover;
@@ -18,11 +19,13 @@ public class GrapheService {
 
     private final DepartRepository departRepository;
     private final OFSTurnoverRepository ofsturnoverRepository;
+    private final CentrecoutRepository centrecoutRepository;
 
     @Autowired
-    public GrapheService(DepartRepository departRepository, OFSTurnoverRepository ofsturnoverRepository) {
+    public GrapheService(DepartRepository departRepository, OFSTurnoverRepository ofsturnoverRepository,CentrecoutRepository centrecoutRepository) {
         this.departRepository = departRepository;
         this.ofsturnoverRepository = ofsturnoverRepository;
+        this.centrecoutRepository = centrecoutRepository;
 
     }
 
@@ -73,7 +76,7 @@ public class GrapheService {
             raisons.add(depart.getRaison());
         }
 
-        Map<String, Long> counters = raisons.stream().collect(Collectors.groupingBy(Raison::getLibelle, Collectors.counting()));
+        Map<String, Long> counters = raisons.stream().collect(Collectors.groupingBy(Raison::getRaisonOFS, Collectors.counting()));
         List<Graphe> graphes = new ArrayList<>();
         for (Map.Entry<String, Long> entry : counters.entrySet()) {
             Graphe graphe = new Graphe();
@@ -82,6 +85,53 @@ public class GrapheService {
             graphes.add(graphe);
         }
         graphes.sort(Comparator.comparing(Graphe::getValeurY));
+        return graphes;
+    }
+
+    public List<Graphe> getAllRaison() {
+        List<Depart> departs = this.departRepository.findAll();
+        List<Raison> raisons = new ArrayList<>();
+        for (Depart depart : departs) {
+            raisons.add(depart.getRaison());
+        }
+        Map<String, Long> counters = raisons.stream().collect(Collectors.groupingBy(Raison::getRaisonOFS, Collectors.counting()));
+        List<Graphe> graphes = new ArrayList<>();
+
+        for (Map.Entry<String, Long> entry : counters.entrySet()) {
+            Graphe graphe = new Graphe();
+            graphe.setCategorie(entry.getKey());
+            graphe.setValeurY(entry.getValue().doubleValue());
+            graphes.add(graphe);
+        }
+        graphes.sort(Comparator.comparing(Graphe::getValeurY));
+        return graphes;
+    }
+
+    // retourne le taux de départ par raison comparé au taux ofs par raison
+    public List<Graphe> getAllRaisonTauxCompare() {
+        List<Depart> departs = this.departRepository.findAll();
+        List<Raison> raisons = new ArrayList<>();
+        for (Depart depart : departs) {
+            raisons.add(depart.getRaison());
+        }
+        Map<String, Long> counters = raisons.stream().collect(Collectors.groupingBy(Raison::getRaisonOFS, Collectors.counting()));
+        List<Centrecout> centrecouts = this.centrecoutRepository.findAll();
+        Integer totalEffectif = 0;
+        for (Centrecout cc : centrecouts) {
+            totalEffectif = totalEffectif + cc.getEffectif();
+        }
+
+        List<Graphe> graphes = new ArrayList<>();
+
+        for (Map.Entry<String, Long> entry : counters.entrySet()) {
+            Graphe graphe = new Graphe();
+            graphe.setCategorie(entry.getKey());
+            Double turnover = CalculateTurnover.turnover(entry.getValue().doubleValue(), totalEffectif.doubleValue());
+            graphe.setValeurY(turnover);
+            OFSTurnover ofsTurnover = this.ofsturnoverRepository.findByCategorieEquals(entry.getKey());
+            graphe.setOfsTaux(ofsTurnover.getTaux());
+            graphes.add(graphe);
+        }
         return graphes;
     }
 

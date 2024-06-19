@@ -50,4 +50,12 @@ public class DepartService {
         return departRepository.findAllByCentrecoutCode(code);
     }
 
+    public Depart saveDepart(Depart depart) {
+        return departRepository.save(depart);
+    }
+
+    public List<Depart> getDepartByRaisonOFS(String raisonOFS) {
+        return departRepository.findAllByRaisonOFS(raisonOFS);
+    }
+
 }

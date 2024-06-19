@@ -52,4 +52,15 @@ public class DepartController {
     public List<Depart> getAllDepartByCentreCode(@PathVariable String code) {
         return departService.getDepartByCentreCode(code);
     }
+
+    @PostMapping
+    public Depart createEntity(@RequestBody Depart depart) {
+        return departService.saveDepart(depart);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/depart/raison/{raisonofs}")
+    public List<Depart> getAllDepartByRaisonOfs(@PathVariable String raisonofs) {
+        return departService.getDepartByRaisonOFS(raisonofs);
+    }
 }

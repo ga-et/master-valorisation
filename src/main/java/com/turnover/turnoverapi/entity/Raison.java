@@ -13,6 +13,8 @@ public class Raison {
     @Column(nullable = false)
     private String libelle;
 
+    private String raisonOFS;
+
     public Long getId() {
         return id;
     }
@@ -27,5 +29,13 @@ public class Raison {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public String getRaisonOFS() {
+        return raisonOFS;
+    }
+
+    public void setRaisonOFS(String raisonOFS) {
+        this.raisonOFS = raisonOFS;
     }
 }

@@ -38,4 +38,16 @@ public class GrapheController {
     public List<Graphe> getAllRaisonByCentreCout(@PathVariable String code) {
         return this.grapheService.getAllRaisonByCentreCout(code);
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/graphe/raison")
+    public List<Graphe> getAllRaison() {
+        return this.grapheService.getAllRaison();
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/graphe/raison/taux")
+    public List<Graphe> getAllRaisonOFSTaux() {
+        return this.grapheService.getAllRaisonTauxCompare();
+    }
 }

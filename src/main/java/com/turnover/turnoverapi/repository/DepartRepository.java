@@ -15,4 +15,7 @@ public interface DepartRepository extends JpaRepository<Depart, Long> {
 
     @Query("select d from Depart d where d.centrecout.code = ?1")
     List<Depart> findAllByCentrecoutCode(String centrecoutCode);
+
+    @Query("select d from Depart d where d.raison.raisonOFS = ?1")
+    List<Depart> findAllByRaisonOFS(String raisonOFS);
 }
